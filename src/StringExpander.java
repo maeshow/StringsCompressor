@@ -1,6 +1,4 @@
-public class Task2 {
-    private static char DEFAULT = 'a';
-
+public class StringExpander {
     public static void main(String[] args) {
         String text = decode("A5B10CD9E2F5G");
         System.out.println(text);
@@ -8,31 +6,32 @@ public class Task2 {
 
     private static String decode(String expandedStr) {
         StringBuilder builder = new StringBuilder();
-        boolean isSkip = false;
-        char character = DEFAULT;
         for (int i = 0; i < expandedStr.length(); i++) {
-            if (!isNumber(expandedStr.charAt(i))) {
-                character = expandedStr.charAt(i);
-                builder.append(character);
-                isSkip = false;
-                continue;
-            }
-            if (!isSkip) {
-                isSkip = true;
-                int numberOfChar = extractionCount(expandedStr, i) - 1;
-                builder.append(outputString(numberOfChar, character));
-            }
+            addChar(builder, expandedStr, i);
         }
         return builder.toString();
+    }
+
+    private static void addChar(StringBuilder builder, String expandedStr, int index) {
+        char character = expandedStr.charAt(index);
+        if (!isNumber(character)) {
+            builder.append(character);
+            return;
+        }
+        character = expandedStr.charAt(index - 1);
+        if (!isNumber(character)) {
+            int numberOfChar = extractionCount(expandedStr, index) - 1;
+            builder.append(outputString(numberOfChar, character));
+        }
     }
 
     private static int extractionCount(String expandedStr, int startPoint) {
         StringBuilder builder = new StringBuilder();
         for (int i = startPoint; i < expandedStr.length() - 1; i++) {
-            char prev = expandedStr.charAt(i);
+            char current = expandedStr.charAt(i);
             char next = expandedStr.charAt(i + 1);
-            builder.append(String.valueOf(prev));
-            if (isNumber(prev) && isNumber(next)) {
+            builder.append(String.valueOf(current));
+            if (isNumber(current) && isNumber(next)) {
                 continue;
             }
             break;
